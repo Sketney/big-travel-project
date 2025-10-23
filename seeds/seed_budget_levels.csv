@@ -1,0 +1,9 @@
+country_code,level,lodging_per_day,food_per_day,transport_per_day,leisure_per_day,currency
+# Levels: budget | medium | luxury
+# Example placeholder values (edit before use):
+THA,budget,20,10,4,6,USD
+THA,medium,40,18,6,10,USD
+THA,luxury,120,35,12,25,USD
+TUR,budget,25,12,5,8,USD
+TUR,medium,55,20,7,12,USD
+TUR,luxury,150,45,15,30,USD

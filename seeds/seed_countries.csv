@@ -1,0 +1,11 @@
+country_code_iso3,country_code_iso2,country_name,default_currency
+DEU,DE,Germany,EUR
+ESP,ES,Spain,EUR
+THA,TH,Thailand,THB
+ARE,AE,United Arab Emirates,AED
+TUR,TR,Turkey,TRY
+EGY,EG,Egypt,EGP
+IDN,ID,Indonesia,IDR
+IND,IN,India,INR
+JPN,JP,Japan,JPY
+USA,US,United States,USD

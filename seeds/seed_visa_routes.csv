@@ -1,0 +1,3 @@
+citizenship_code,destination_code,visa_status,visa_type,max_stay_days,cost_usd,last_updated,is_current,source_provider,source_url
+# Example row (remove the leading '#' when you add real data):
+# RUS,THA,visa,eVisa,60,40,2025-10-20,true,Official Embassy,https://example.embassy.tld
