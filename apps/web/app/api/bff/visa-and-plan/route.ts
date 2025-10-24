@@ -22,15 +22,25 @@ export async function POST(req: NextRequest) {
 
     if (visaErr) throw visaErr
 
-    // 2) Checklist templates (by country/visa type)
-    let visaType = visa?.visa_type || null
-    const { data: checklist, error: chkErr } = await supabase
-      .from('checklist_templates')
+// 2) Visa documents (v1.2): гражданство + страна назначения
+    const { data: docs, error: docsErr } = await supabase
+      .from('visa_documents')
       .select('*')
-      .eq('country_code', country)
-      .or(visaType ? `visa_type.eq.${visaType},visa_type.is.null` : 'visa_type.is.null')
+      .eq('citizenship_code', passport)
+      .eq('destination_code', country)
+      .order('order_index', { ascending: true });
 
-    if (chkErr) throw chkErr
+    if (docsErr) throw docsErr
+
+// Приведём к простому чек-листу для фронта
+    const checklist = (docs || []).map(d => ({
+      id: d.id,
+      title: d.document_name,
+      is_required: d.is_required,
+      notes: d.description,
+      order_index: d.order_index
+    }));
+
 
     // 3) Source attribution (if present)
     let source = null as any
@@ -48,10 +58,11 @@ export async function POST(req: NextRequest) {
       country,
       visa_status: visa?.visa_required ? (visa.visa_type || 'visa') : (visa?.visa_type || 'visa-free'),
       visa_raw: visa,
-      checklist: checklist || [],
+      checklist, // ← вот это
       last_updated: visa?.updated_at || visa?.fetched_at || null,
       source
     })
+
   } catch (e: any) {
     console.error(e)
     return NextResponse.json({ error: e.message || 'Internal error' }, { status: 500 })
