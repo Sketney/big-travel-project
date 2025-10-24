@@ -1,3 +1,5 @@
+export const runtime = 'nodejs'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseServer } from '@/lib/supabaseServer'
 import { readGuestId } from '@/lib/guest'
@@ -27,7 +29,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   if (!item) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
   const patch = await req.json().catch(() => ({}))
-  const allowed = ['title','status','due_at','order_index','notes']
+  const allowed = ['title', 'status', 'due_at', 'order_index', 'notes']
   const update: Record<string, any> = {}
   for (const k of allowed) if (k in patch) update[k] = patch[k]
 
