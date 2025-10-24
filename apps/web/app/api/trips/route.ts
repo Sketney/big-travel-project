@@ -1,4 +1,4 @@
-export const runtime = 'nodejs' // гарантируем Node runtime
+export const runtime = 'nodejs'
 
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseServer } from '@/lib/supabaseServer'
@@ -15,10 +15,10 @@ export async function GET() {
     .select('*')
     .eq('guest_id', guestId ?? '__none__')
     .order('created_at', { ascending: false })
+  if (error) return NextResponse.json({ error: error.message }, { status: 400 })
 
   const res = NextResponse.json({ trips: data })
-  if (!existing) ensureGuestCookie(res) // тут же ставим cookie на возвращаемый ответ
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+  if (!existing) ensureGuestCookie(res) // ставим cookie прямо на возвращаемый ответ
   return res
 }
 
@@ -41,11 +41,15 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  const res = NextResponse.json({ ok: true }) // временный, чтоб поставить cookie
-  const guestId = ensureGuestCookie(res)
+  // получим/сгенерим guestId, не трогая тело ответа
+  let guestId = readGuestId()
+  if (!guestId) {
+    const probe = NextResponse.json({ ok: true }) // временный response лишь чтобы получить id
+    guestId = ensureGuestCookie(probe)            // вернёт сгенерированный id
+  }
 
   const insert = {
-    guest_id: guestId,
+    guest_id: guestId!,
     destination_country_code: String(destination_country_code).toUpperCase(),
     start_date,
     end_date,
@@ -57,7 +61,8 @@ export async function POST(req: NextRequest) {
   const { data, error } = await sb.from('trips').insert(insert).select('*').single()
   if (error) return NextResponse.json({ error: error.message }, { status: 400 })
 
-  // Возвращаем ТУ ЖЕ response, куда поставили cookie
-  res.body = null as any // обнулим заглушку
-  return NextResponse.json({ trip: data }, { status: 201, headers: res.headers })
+  // формируем финальный ответ и ставим cookie на него
+  const res = NextResponse.json({ trip: data }, { status: 201 })
+  ensureGuestCookie(res, guestId!)
+  return res
 }
