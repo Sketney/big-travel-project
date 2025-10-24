@@ -5,7 +5,12 @@ import { readGuestId } from '@/lib/guest'
 type Params = { params: { id: string } }
 
 async function assertOwner(sb: any, tripId: string, guestId: string | null) {
-  const { data } = await sb.from('trips').select('id').eq('id', tripId).eq('user_id', guestId ?? '__none__').maybeSingle()
+  const { data } = await sb
+    .from('trips')
+    .select('id')
+    .eq('id', tripId)
+    .eq('guest_id', guestId ?? '__none__')
+    .maybeSingle()
   return !!data
 }
 
@@ -14,7 +19,11 @@ export async function GET(_: NextRequest, { params }: Params) {
   const guestId = readGuestId()
   if (!(await assertOwner(sb, params.id, guestId))) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-  const { data, error } = await sb.from('checklist_items').select('*').eq('trip_id', params.id).order('order_index', { ascending: true })
+  const { data, error } = await sb
+    .from('checklist_items')
+    .select('*')
+    .eq('trip_id', params.id)
+    .order('order_index', { ascending: true })
   if (error) return NextResponse.json({ error: error.message }, { status: 400 })
   return NextResponse.json({ items: data || [] })
 }
