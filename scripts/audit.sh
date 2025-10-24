@@ -34,7 +34,15 @@ test -f "$ROOT/app/api/bff/visa-and-plan/route.ts" || { echo "❌ Нет BFF /ap
 echo "✅ BFF найден"
 
 # 6) Сборка
-( cd "$ROOT" && npm ci && npm run build )
+if ! command -v npm >/dev/null 2>&1; then
+  echo "❌ npm not found. Установи Node.js LTS (winget install OpenJS.NodeJS.LTS) и перезапусти терминал."
+  exit 1
+fi
+
+( cd "$ROOT" && \
+  if [ -f package-lock.json ]; then npm ci; else npm install; fi && \
+  npm run build )
 echo "✅ Build OK"
+
 
 echo "== Audit done =="
