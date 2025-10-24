@@ -1,6 +1,6 @@
 'use client';
-
-import { useState } from 'react';
+import { useState } from 'react'
+import { posthog } from '@/lib/analytics/posthog'
 
 export default function Home() {
   const [passport, setPassport] = useState('RUS');
@@ -10,20 +10,43 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
 
   async function check() {
-    setLoading(true);
-    setError(null);
-    setResult(null);
+    setLoading(true); setError(null); setResult(null);
+    const t0 = (typeof performance !== 'undefined') ? performance.now() : Date.now();
+
+    // старт
+    posthog.capture('visa_check_started', { passport, country });
+
     try {
       const res = await fetch('/api/bff/visa-and-plan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ passport, country })
       });
-      if (!res.ok) throw new Error('Failed: ' + res.status);
+      const ok = res.ok;
       const data = await res.json();
+
+      if (!ok) throw new Error(data?.error || ('HTTP ' + res.status));
+
       setResult(data);
+
+      // успех
+      posthog.capture('visa_check_succeeded', {
+        passport, country,
+        visa_status: data?.visa_status ?? null
+      });
+
+      // TtC (секунды, с одним знаком)
+      const t1 = (typeof performance !== 'undefined') ? performance.now() : Date.now();
+      const seconds = Math.round(((t1 - t0) / 1000) * 10) / 10;
+      posthog.capture('ttc_visa', { seconds, passport, country });
+
     } catch (e: any) {
       setError(e.message);
+      // фейл
+      posthog.capture('visa_check_failed', {
+        passport, country,
+        error: e?.message?.slice(0, 300) || 'unknown'
+      });
     } finally {
       setLoading(false);
     }
