@@ -54,31 +54,29 @@ export default function Checklist({ tripId }: { tripId: string }) {
   }
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-semibold">Travel Checklist</h2>
+  <div className="space-y-6">
+    <h2 className="text-2xl font-semibold">Чек-лист</h2>
 
-      <form onSubmit={add} className="flex gap-3 flex-wrap">
-        <input className="border rounded px-2 py-1 min-w-[220px]" placeholder="Новый пункт…"
-               value={title} onChange={e=>setTitle(e.target.value)} />
-        <input type="date" className="border rounded px-2 py-1" value={due} onChange={e=>setDue(e.target.value)} />
-        <button className="px-3 py-1 bg-blue-600 text-white rounded">Добавить</button>
-      </form>
+    <form onSubmit={add} className="flex gap-3 flex-wrap items-center">
+      <input className="border rounded px-3 py-2 min-w-[240px]" placeholder="Новый пункт…"
+             value={title} onChange={e=>setTitle(e.target.value)} />
+      <input type="date" className="border rounded px-3 py-2" value={due} onChange={e=>setDue(e.target.value)} />
+      <button className="px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Добавить</button>
+      {err && <span className="text-red-600">{err}</span>}
+    </form>
 
-      {err && <p className="text-red-600">Ошибка: {err}</p>}
-
-      <ul className="space-y-2">
-        {items.map(it => (
-          <li key={it.id} className="flex items-center gap-3 border rounded p-2">
-            <input type="checkbox" checked={it.is_completed} onChange={()=>toggle(it)} />
-            <div className="flex-1">
-              <div className={it.is_completed ? 'line-through text-gray-400' : ''}>{it.title}</div>
-              <div className="text-xs text-gray-500">{it.due_at ? `К сроку: ${it.due_at}` : ''}</div>
-            </div>
-            <button onClick={()=>remove(it)} className="text-red-700">Удалить</button>
-          </li>
-        ))}
-        {items.length === 0 && <li>Пока пусто — добавь первый пункт.</li>}
-      </ul>
-    </div>
-  )
-}
+    <ul className="space-y-2">
+      {items.map(it => (
+        <li key={it.id} className="flex items-center gap-3 border rounded-md p-3 bg-white">
+          <input type="checkbox" checked={it.is_completed} onChange={()=>toggle(it)} />
+          <div className="flex-1">
+            <div className={it.is_completed ? 'line-through text-gray-400' : 'font-medium'}>{it.title}</div>
+            {it.due_at && <div className="text-xs text-gray-500">К сроку: {it.due_at}</div>}
+          </div>
+          <button onClick={()=>remove(it)} className="text-red-700 hover:underline">Удалить</button>
+        </li>
+      ))}
+      {items.length === 0 && <li className="text-gray-500">Пока пусто — добавь первый пункт.</li>}
+    </ul>
+  </div>
+)
