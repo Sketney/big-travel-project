@@ -65,7 +65,7 @@ export default function TripsPage() {
       const data = await res.json()
       if (!res.ok) throw new Error(data?.error || 'Failed to create trip')
       const id = data?.trip?.id
-      if (id) router.push(`/trips/${id}`)
+      if (id) router.push(`/trips/${id}/visa`)
       else await loadTrips()
     } catch (e: any) {
       setErr(e.message)
