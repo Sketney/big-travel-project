@@ -1,0 +1,21 @@
+# Node / Next
+**/node_modules
+**/.next
+**/dist
+**/build
+**/.turbo
+**/.cache
+**/.vercel
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Env
+.env
+.env.*
+*.env
+*.env.*
+
+# OS junk
+.DS_Store
+Thumbs.db
