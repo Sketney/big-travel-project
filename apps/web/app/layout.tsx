@@ -8,7 +8,7 @@ import './globals.css'
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ru">
-      <body style={{ margin: 0, fontFamily: 'system-ui, sans-serif' }}>
+      <body className="bg-gray-50 text-gray-900">
         {children}
       </body>
     </html>
