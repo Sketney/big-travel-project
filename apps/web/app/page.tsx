@@ -50,7 +50,9 @@ export default function Home() {
     <main style={{ maxWidth: 800, margin: '32px auto', padding: '0 16px', fontFamily: 'system-ui' }}>
       <h1>Travel MVP</h1>
       <p>Быстрый чек: нужна ли виза и что подготовить.</p>
-
+      <p style={{ marginTop: 8 }}>
+        <a href="/trips">→ Перейти к поездкам</a>
+      </p>
       <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
         <input value={passport} onChange={e => setPassport(e.target.value.toUpperCase())} placeholder="Паспорт (ISO3)" />
         <input value={country} onChange={e => setCountry(e.target.value.toUpperCase())} placeholder="Страна (ISO3)" />
